@@ -57,15 +57,14 @@ const corners = (c: Vec2, w: number, h: number): Vec2[] => [
   [c[0] - w / 2, c[1] + h / 2],
 ];
 
-export function checkGuarantees(layout: CanopyLayout, views: CheckView[] = defaultViews(layout.params.maxTilt), expectedNodes?: number): Violation[] {
+/** `expectedNodes` defaults to every node the layout was given a region for, so a dropped leaf is always reported. */
+export function checkGuarantees(layout: CanopyLayout, views: CheckView[] = defaultViews(layout.params.maxTilt), expectedNodes: number = Object.keys(layout.nodeRegion).length): Violation[] {
   const out: Violation[] = [];
   const { tufts, regions, params: p } = layout;
 
   cellChecks(tufts, regions, out);
-  if (expectedNodes !== undefined) {
-    const placed = tufts.reduce((s, t) => s + t.leaves.length, 0);
-    if (placed < expectedNodes) out.push({ kind: "droppedLeaves", id: String(expectedNodes - placed) });
-  }
+  const placed = tufts.reduce((s, t) => s + t.leaves.length, 0);
+  if (placed < expectedNodes) out.push({ kind: "droppedLeaves", id: String(expectedNodes - placed) });
 
   for (const view of views) {
     const basis = viewBasis(view.azimuth, view.tilt);
