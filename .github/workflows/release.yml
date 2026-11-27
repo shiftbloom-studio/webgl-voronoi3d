@@ -1,0 +1,42 @@
+name: Release
+
+# On main: opens or updates the "chore: version packages" PR from pending changesets.
+# Merging that PR publishes to npm through trusted publishing (OIDC, with provenance).
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    name: Version or publish
+    # npm trusted publishing (OIDC) only works on GitHub-hosted runners.
+    runs-on: ubuntu-latest
+    environment: npm
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+      - uses: changesets/action@v2
+        with:
+          version: npx changeset version
+          publish: npx changeset publish
+          commit: "chore: version packages"
+          title: "chore: version packages"
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
