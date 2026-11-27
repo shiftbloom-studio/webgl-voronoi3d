@@ -1,0 +1,55 @@
+{
+  "name": "@shiftbloom-studio/webgl-voronoi3d",
+  "version": "0.0.0",
+  "description": "Explore large graphs as named 3D Voronoi territories in WebGL, with no hidden cells and no overlapping labels.",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint:package": "publint && attw --pack . --profile esm-only",
+    "check": "npm run typecheck && npm test && npm run build && npm run lint:package",
+    "changeset": "changeset",
+    "release": "changeset publish"
+  },
+  "dependencies": {
+    "graphology": "^0.26.0",
+    "graphology-communities-louvain": "^2.0.2"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@changesets/changelog-github": "^2.0.0",
+    "@changesets/cli": "^3.1.0",
+    "graphology-types": "^0.24.8",
+    "publint": "^0.3.25",
+    "tsdown": "^0.23.7",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.2"
+  },
+  "engines": {
+    "node": ">=26"
+  },
+  "keywords": ["voronoi", "graph", "webgl", "three", "visualization", "clustering", "react"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shiftbloom-studio/webgl-voronoi3d.git"
+  },
+  "bugs": "https://github.com/shiftbloom-studio/webgl-voronoi3d/issues",
+  "homepage": "https://github.com/shiftbloom-studio/webgl-voronoi3d#readme",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

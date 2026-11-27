@@ -1,0 +1,15 @@
+name: Bug report
+description: Something renders or behaves wrong
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes: { label: What happened, description: "What you did, what you expected, what you saw. A screenshot helps." }
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes: { label: Package version }
+    validations: { required: true }
+  - type: input
+    id: env
+    attributes: { label: Browser and GPU, placeholder: "Firefox 140, Intel Iris Xe" }
