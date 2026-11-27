@@ -265,6 +265,8 @@ export function createCanopy(container: HTMLElement, initial: CanopyOptions): Ca
     world.add(groundBuffers(layout, theme));
     scene.add(world);
     buildLabels();
+    // New labels start in place, not stacked at the corner until the next frame.
+    placeLabels(currentProjection());
     tree.update(layout, nodes);
     paintLeaves();
     schedule();
@@ -738,7 +740,8 @@ export function createCanopy(container: HTMLElement, initial: CanopyOptions): Ca
         needLayout = true;
         setTarget({ zoom: 1, center: [0, 0] });
       }
-      const highlightChanged = "highlight" in next && next.highlight !== prev.highlight;
+      // Compared by content: a new Set or Map with the same hits per render must not relayout or reset the view.
+      const highlightChanged = "highlight" in next && !sameHighlight(next.highlight ?? null, prev.highlight ?? null);
       if (highlightChanged) needLayout = true;
       if (needLayout) {
         regionNeighbourMap = null;
@@ -768,7 +771,7 @@ export function createCanopy(container: HTMLElement, initial: CanopyOptions): Ca
       if (nodes.has(id)) select(id);
     },
     resetView,
-    checkGuarantees: () => (layout ? checkGuarantees(layout, undefined, opts.nodes.length) : []),
+    checkGuarantees: () => (layout ? checkGuarantees(layout) : []),
     screenOf(id) {
       if (!layout) return null;
       const pr = currentProjection();
@@ -796,6 +799,14 @@ function shallowEqual(a: object, b: object | undefined): boolean {
   if (!b) return false;
   const ka = Object.keys(a);
   return ka.length === Object.keys(b).length && ka.every((k) => (a as Record<string, unknown>)[k] === (b as Record<string, unknown>)[k]);
+}
+
+function sameHighlight(a: Highlight, b: Highlight): boolean {
+  if (a === b) return true;
+  if (!a || !b || a.size !== b.size || a instanceof Map !== b instanceof Map) return false;
+  if (a instanceof Map) return [...a].every(([k, v]) => (b as Map<string, number>).get(k) === v && b.has(k));
+  for (const k of a) if (!b.has(k)) return false;
+  return true;
 }
 
 const xy = (s: Vec2) => ({ x: s[0], y: s[1] });

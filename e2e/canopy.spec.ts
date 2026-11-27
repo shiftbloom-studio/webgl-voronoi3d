@@ -72,3 +72,19 @@ test("labels never overlap on screen", async ({ page }) => {
       }
   }
 });
+
+test("an equal search passed again keeps the view", async ({ page }) => {
+  await page.goto("/?motion=0&vanilla=1");
+  await page.waitForFunction(() => Boolean(window.__canopy?.layout));
+  const zoomAfter = (ids: string[]) =>
+    page.evaluate((hits) => {
+      const c = window.__canopy as unknown as { update(o: { highlight: Set<string> }): void; view: { zoom: number } };
+      c.update({ highlight: new Set(hits) });
+      return c.view.zoom;
+    }, ids);
+  expect(await zoomAfter(["home/preferences#0"])).toBe(1);
+  await page.evaluate(() => window.__canopy!.setView({ zoom: 3 }, false));
+  // A new Set with the same hits, as a parent re-render would pass it: no relayout, no jump back to the overview.
+  expect(await zoomAfter(["home/preferences#0"])).toBe(3);
+  expect(await zoomAfter(["home/preferences#1"])).toBe(1);
+});
