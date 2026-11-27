@@ -10,11 +10,23 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./three": {
+      "types": "./dist/three.d.ts",
+      "import": "./dist/three.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
@@ -22,7 +34,9 @@
     "lint:package": "publint && attw --pack . --profile esm-only",
     "check": "npm run typecheck && npm test && npm run build && npm run lint:package",
     "changeset": "changeset",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "playground": "vite --config playground/vite.config.ts",
+    "test:browser": "playwright test"
   },
   "dependencies": {
     "graphology": "^0.26.0",
@@ -32,16 +46,34 @@
     "@arethetypeswrong/cli": "^0.18.5",
     "@changesets/changelog-github": "^2.0.0",
     "@changesets/cli": "^3.1.0",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.11",
+    "@types/react": "^19.3.3",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.187.0",
+    "@vitejs/plugin-react": "^6.3.0",
     "graphology-types": "^0.24.8",
     "publint": "^0.3.25",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "three": "^0.187.0",
     "tsdown": "^0.23.7",
     "typescript": "^7.0.2",
+    "vite": "^8.4.0",
     "vitest": "^5.1.2"
   },
   "engines": {
     "node": ">=26"
   },
-  "keywords": ["voronoi", "graph", "webgl", "three", "visualization", "clustering", "react"],
+  "keywords": [
+    "voronoi",
+    "graph",
+    "webgl",
+    "three",
+    "visualization",
+    "clustering",
+    "react"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shiftbloom-studio/webgl-voronoi3d.git"
@@ -51,5 +83,17 @@
   "publishConfig": {
     "access": "public",
     "provenance": true
+  },
+  "peerDependencies": {
+    "react": ">=19",
+    "three": ">=0.170"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "three": {
+      "optional": true
+    }
   }
 }
