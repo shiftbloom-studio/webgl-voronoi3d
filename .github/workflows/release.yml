@@ -18,7 +18,8 @@ permissions:
 jobs:
   release:
     name: Version or publish
-    runs-on: ${{ (github.event.repository.private || vars.CI_RUNNER_PUBLIC == 'true') && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && vars.CI_RUNNER || 'ubuntu-latest' }}
+    # npm trusted publishing (OIDC) only works on GitHub-hosted runners.
+    runs-on: ubuntu-latest
     environment: npm
     timeout-minutes: 15
     steps:
