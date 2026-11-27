@@ -185,8 +185,12 @@ export function layoutCanopy(input: { regions: RegionInput[]; nodes: NodeInput[]
       let tight = false;
       solved.cells.forEach((cell, i) => {
         const inner = insetPoly(cell, p.gapRegion / 2);
-        if (!inner.length || incircle(inner).r < discs[i]! * fit) {
-          targets[i]! *= 1.18;
+        const have = inner.length ? incircle(inner).r : 0;
+        const need = discs[i]! * fit;
+        if (have < need) {
+          // At least x 1.18; a cell far short (a thin sliver next to a much larger region) grows with its deficit,
+          // so six rounds are enough to make room instead of folding a region that would fit.
+          targets[i]! *= have > 0 ? Math.min(3, Math.max(1.18, (need / have) ** 2 * 1.06)) : 3;
           tight = true;
         }
       });
@@ -250,7 +254,10 @@ export function layoutCanopy(input: { regions: RegionInput[]; nodes: NodeInput[]
       const promised = focused ? 1 : p.focusZoom;
       const circle = incircle(poly);
       let children = t.children.map((c) => ({ id: c.id, label: c.label }));
-      if (children.length < 3) {
+      if (t.members && children.length < 3) {
+        // A group always names its members (3.8): with fewer than three, empty unnamed tufts fill the ring.
+        for (let k = children.length; k < 3; k++) children.push({ id: `${r.id}/~${k}`, label: "" });
+      } else if (children.length < 3) {
         // Too few topics to surround a heart: the nodes are dealt into three unnamed tufts by rank, so every region has the same build.
         const all = [...(local.get(r.id) ?? []), ...children.flatMap((c) => local.get(c.id) ?? [])].sort((a, b) => (b.rank ?? 0) - (a.rank ?? 0) || byId(a, b));
         children = [0, 1, 2].map((k) => ({ id: `${r.id}/~${k}`, label: "" }));

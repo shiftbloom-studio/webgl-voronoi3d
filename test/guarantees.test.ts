@@ -46,6 +46,32 @@ describe("canopy guarantees", () => {
     for (const id of tops) expect(shown.has(id)).toBe(true);
   });
 
+  it("a group of two still names both members (3.8)", () => {
+    const data = grove(7);
+    const layout = layoutCanopy(data, { width: 700, height: 700 }, measure);
+    expect(kinds(checkGuarantees(layout))).toEqual({});
+    const group = layout.regions.find((r) => r.members)!;
+    expect(group.members).toHaveLength(2);
+    const names = layout.tufts.filter((t) => t.region === group.id && t.label).map((t) => t.label);
+    expect(names.sort()).toEqual(group.members!.map((id) => data.regions.find((r) => r.id === id)!.label).sort());
+  });
+
+  it("does not fold a small region next to a much larger one when both fit", () => {
+    const layout = layoutCanopy(
+      {
+        regions: [
+          { id: "a", label: "alpha" },
+          { id: "b", label: "beta" },
+        ],
+        nodes: [{ id: "n", region: "a" }],
+      },
+      VIEWPORTS[0]!,
+      measure,
+    );
+    expect(kinds(checkGuarantees(layout))).toEqual({});
+    expect(layout.regions.map((r) => r.id)).toEqual(["a", "b"]);
+  });
+
   it("respects the safe area left by panels", () => {
     const data = grove(21);
     const layout = layoutCanopy(data, { width: 1600, height: 1000, inset: { top: 0, right: 420, bottom: 0, left: 0 } }, measure);
