@@ -2,9 +2,12 @@ name: Release
 
 # On main: opens or updates the "chore: version packages" PR from pending changesets.
 # Merging that PR publishes to npm through trusted publishing (OIDC, with provenance).
+# Stays off until the repository variable NPM_RELEASE is "on", which is set once the
+# trusted publisher exists on npmjs.com, so no version PR waits around that cannot publish.
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: release
@@ -20,6 +23,7 @@ jobs:
     name: Version or publish
     # npm trusted publishing (OIDC) only works on GitHub-hosted runners.
     runs-on: ubuntu-latest
+    if: vars.NPM_RELEASE == 'on'
     environment: npm
     timeout-minutes: 15
     steps:
@@ -33,10 +37,10 @@ jobs:
       - run: npm run check
       - uses: changesets/action@v2
         with:
-          version: npx changeset version
-          publish: npx changeset publish
-          commit: "chore: version packages"
-          title: "chore: version packages"
-          createGithubReleases: true
+          version-script: npx changeset version
+          publish-script: npx changeset publish
+          commit-message: "chore: version packages"
+          pr-title: "chore: version packages"
+          create-github-releases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
