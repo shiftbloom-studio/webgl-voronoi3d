@@ -20,6 +20,8 @@ const SPEC: [string, number, string[], boolean?][] = [
   ["inbox", 40, []],
 ];
 
+const LEAF_COLORS = ["#C81040", "#FF2E52", "#FF8FAB", "#FF8FAB", "#FFC2D3"];
+
 export const HUB_NAMES = ["markdown", "calendar", "photos", "spreadsheets", "email", "backups", "printing", "maps", "bikes", "tea", "keyboards", "lamps"];
 
 export function grove(seed = 7, scale = 1): { regions: RegionInput[]; nodes: NodeInput[]; hubs: HubInput[] } {
@@ -39,7 +41,8 @@ export function grove(seed = 7, scale = 1): { regions: RegionInput[]; nodes: Nod
       for (let i = 0; i < m; i++) {
         const x = rnd();
         const shape = x < 0.2 ? "diamond" : x < 0.28 ? "seed" : "leaf";
-        nodes.push({ id: `${id}#${i}`, region: id, shape, rank: rnd() ** 1.6, t: rnd(), label: `${t ?? name} note ${i}` });
+        const color = shape === "diamond" ? "#B9AEB2" : shape === "seed" ? "#1A1216" : LEAF_COLORS[Math.floor(rnd() * LEAF_COLORS.length)]!;
+        nodes.push({ id: `${id}#${i}`, region: id, shape, color, rank: rnd() ** 1.6, t: rnd(), label: `${t ?? name} note ${i}` });
       }
     });
   }

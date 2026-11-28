@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>webgl-voronoi3d playground</title>
+    <style>
+      @font-face { font-family: "General Sans"; src: url("/fonts/general-sans.woff2") format("woff2"); font-weight: 200 700; }
+      html, body, #app { margin: 0; height: 100%; }
+      body { font: 14px/1.4 "General Sans", system-ui, sans-serif; color: #1a1216; background: #f6f1ee; }
+      .bar { position: absolute; left: 16px; bottom: 16px; display: flex; gap: 12px; align-items: center; padding: 10px 14px; background: rgba(255, 255, 255, 0.88); border-radius: 14px; z-index: 2; }
+      .bar input[type="search"] { width: 180px; }
+      .tip { background: #1a1216; color: #fff; padding: 4px 8px; border-radius: 8px; font-size: 12px; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./main.tsx"></script>
+  </body>
+</html>
